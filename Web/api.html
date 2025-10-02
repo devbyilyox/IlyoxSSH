@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ilyox'SSH - Documentation API</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #0f0f0f;
+      color: #f0f0f0;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #6a0dad, #3a0ca3);
+      padding: 2rem;
+      text-align: center;
+      color: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    h2 {
+      color: #bb86fc;
+      border-bottom: 2px solid #bb86fc;
+      padding-bottom: .5rem;
+      margin-top: 2rem;
+    }
+    pre, code {
+      background: #111;
+      color: #00ffc6;
+      padding: .6rem 1rem;
+      border-radius: 8px;
+      display: block;
+      font-family: monospace;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background: #0b0b0b;
+      color: #777;
+      margin-top: 3rem;
+      font-size: .9rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Documentation API</h1>
+</header>
+
+<main>
+  <p>
+    Le projet <b>Ilyox'SSH</b> utilise plusieurs bibliothèques et API Python afin d’assurer 
+    la connexion sécurisée, l’affichage en terminal et la génération d’exécutables Windows.
+  </p>
+
+  <h2>1. Paramiko (SSH)</h2>
+  <p>
+    <b>Paramiko</b> est une bibliothèque Python qui implémente le protocole SSH2.  
+    Elle permet :
+  </p>
+  <ul>
+    <li>Connexion à des serveurs distants via <code>ssh.connect()</code></li>
+    <li>Exécution de commandes distantes via <code>ssh.exec_command()</code></li>
+    <li>Gestion des clés privées et authentification par mot de passe</li>
+  </ul>
+  <p>Exemple :</p>
+  <pre><code>import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect("example.com", username="root", password="secret")
+
+stdin, stdout, stderr = ssh.exec_command("ls -la")
+print(stdout.read().decode())
+ssh.close()</code></pre>
+
+  <h2>2. Colorama (Couleurs terminal)</h2>
+  <p>
+    <b>Colorama</b> permet d’afficher du texte coloré dans le terminal, 
+    compatible Windows et Linux.
+  </p>
+  <p>Exemple :</p>
+  <pre><code>from colorama import Fore, Style
+
+print(Fore.GREEN + "Succès !" + Style.RESET_ALL)
+print(Fore.RED + "Erreur !" + Style.RESET_ALL)</code></pre>
+
+  <h2>3. Pyfiglet (ASCII Art)</h2>
+  <p>
+    <b>Pyfiglet</b> génère du texte en ASCII Art (grands caractères stylisés).
+  </p>
+  <p>Exemple :</p>
+  <pre><code>import pyfiglet
+
+ascii_banner = pyfiglet.figlet_format("Ilyox'SSH")
+print(ascii_banner)</code></pre>
+
+  <h2>4. PyInstaller (Executable .exe)</h2>
+  <p>
+    <b>PyInstaller</b> transforme un script Python en exécutable Windows (.exe).  
+    Cela permet d’utiliser Ilyox'SSH sans installer Python.
+  </p>
+  <p>Commande :</p>
+  <pre><code>pyinstaller --onefile --console ilyox_ssh.py</code></pre>
+
+  <h2>Résumé</h2>
+  <ul>
+    <li><b>Paramiko</b> → SSH et exécution de commandes</li>
+    <li><b>Colorama</b> → Couleurs et mise en forme terminal</li>
+    <li><b>Pyfiglet</b> → ASCII Banner personnalisé</li>
+    <li><b>PyInstaller</b> → Génération d’exécutables</li>
+  </ul>
+
+</main>
+
+<footer>
+  © 2025 Ilyox'SSH — Documentation API
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ilyox'SSH — Statut</title>
+<style>
+  :root{
+    --bg:#0f0f12; --card:#121217; --muted:#9aa3b2;
+    --ok:#2ec27e; --minor:#f6c84c; --major:#ff6b6b; --maint:#7d7dfa;
+    --glass: rgba(255,255,255,0.03);
+  }
+  body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#07070a,#0f0f12);color:#eef2f7}
+  .wrap{max-width:1100px;margin:36px auto;padding:24px}
+  header{display:flex;align-items:center;gap:16px}
+  .logo{
+    font-weight:800;font-size:20px;padding:10px 16px;border-radius:8px;background:linear-gradient(90deg,#7d2ae8,#4c0ca0);
+    box-shadow:0 8px 30px rgba(76,12,160,0.18)
+  }
+  h1{margin:0;font-size:24px}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:12px}
+  .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 20px rgba(0,0,0,0.5)}
+  .statusbar{display:flex;align-items:center;gap:14px}
+  .badge{padding:8px 12px;border-radius:999px;font-weight:700}
+  .badge.ok{background:linear-gradient(90deg,var(--ok),#12a65a);color:#021205}
+  .badge.minor{background:linear-gradient(90deg,var(--minor),#e6b031);color:#1a0b00}
+  .badge.major{background:linear-gradient(90deg,var(--major),#ff4b4b);color:#2a0000}
+  .badge.maint{background:linear-gradient(90deg,var(--maint),#5b5cff);color:#0f0f22}
+  .meta{color:var(--muted);font-size:13px}
+  .flex{display:flex;gap:12px;align-items:center}
+  main{margin-top:20px;display:grid;grid-template-columns: 1fr 360px;gap:18px}
+  .inc-list{display:flex;flex-direction:column;gap:12px}
+  .incident{background:var(--glass);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+  .incident h3{margin:0;font-size:16px}
+  .sev{display:inline-block;padding:6px 10px;border-radius:8px;font-weight:700;margin-top:8px}
+  .sev.ok{background:var(--ok);color:#06220f}
+  .sev.minor{background:var(--minor);color:#2a1400}
+  .sev.major{background:var(--major);color:#3a0b0b}
+  .sev.maint{background:var(--maint);color:#0f0f22}
+  .right .card{position:sticky;top:24px}
+  .muted{color:var(--muted)}
+  .btn{display:inline-block;padding:10px 14px;border-radius:8px;background:#222;color:#fff;text-decoration:none}
+  footer{margin-top:36px;text-align:center;color:var(--muted);font-size:13px}
+  .empty{color:var(--muted);text-align:center;padding:40px;border-radius:10px;background:rgba(255,255,255,0.01)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">Ilyox'SSH</div>
+      <div>
+        <h1>Statut du service</h1>
+        <div class="meta">Consultez l'état actuel des services Ilyox'SSH</div>
+      </div>
+    </header>
+
+    <div class="top" style="margin-top:18px">
+      <div class="card statusbar" id="statusCard">
+        <div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <div id="globalBadge" class="badge ok">OPERATIONNEL</div>
+            <div style="font-weight:700" id="globalText">Tout fonctionne normalement</div>
+          </div>
+          <div class="meta" id="updatedAt" style="margin-top:8px">Dernière mise à jour : —</div>
+        </div>
+      </div>
+
+   
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <section>
+        <div class="card">
+          <h2>Incidents récents</h2>
+          <div id="incidents" class="inc-list">
+            <div class="empty">Aucun incident enregistré.</div>
+          </div>
+        </div>
+
+        <div style="height:18px"></div>
+
+        <div class="card">
+          <h2>Historique (local)</h2>
+          <div id="history" class="inc-list">
+            <div class="empty">Aucun historique local.</div>
+          </div>
+        </div>
+      </section>
+
+      <aside>
+        <div class="card">
+          <h3>Informations</h3>
+          <p class="muted">Cette page lit les données de statut stockées côté client. Pour que les changements soient visibles par tous, vous devez héberger un backend ou un fichier JSON accessible où l'admin enverra les mises à jour.</p>
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0">
+          <div><strong>Statuts possibles</strong></div>
+          <ul class="muted" style="padding-left:18px">
+            <li>OPERATIONNEL</li>
+            <li>DEGRADÉ (minor)</li>
+            <li>MAJOR OUTAGE (major)</li>
+            <li>MAINTENANCE</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      © 2025 Ilyox'SSH — Page statut publique
+    </footer>
+  </div>
+
+<script>
+/*
+ Data model stored in localStorage under key "ilyox_status_data":
+ {
+   global: { state: "ok"|"minor"|"major"|"maint", message: "texte", updated: timestamp },
+   incidents: [ { id, title, details, severity: "minor"|"major"|"maint"|"ok", created } ],
+   history: [ ... ]
+ }
+*/
+const STORAGE_KEY = 'ilyox_status_data';
+
+function formatDate(ts){
+  if(!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleString();
+}
+
+function render(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  let data = null;
+  try { data = raw? JSON.parse(raw) : null; } catch(e){ data=null; }
+  const badge = document.getElementById('globalBadge');
+  const globalText = document.getElementById('globalText');
+  const updatedAt = document.getElementById('updatedAt');
+  const incidentsEl = document.getElementById('incidents');
+  const historyEl = document.getElementById('history');
+
+  if(!data){
+    badge.className = 'badge ok';
+    badge.textContent = 'OPERATIONNEL';
+    globalText.textContent = 'Aucune information publique pour le moment.';
+    updatedAt.textContent = 'Dernière mise à jour : —';
+    incidentsEl.innerHTML = '<div class="empty">Aucun incident enregistré.</div>';
+    historyEl.innerHTML = '<div class="empty">Aucun historique local.</div>';
+    return;
+  }
+
+  // Global
+  const state = data.global?.state || 'ok';
+  const msg = data.global?.message || '—';
+  const up = data.global?.updated || null;
+  updatedAt.textContent = 'Dernière mise à jour : ' + formatDate(up);
+
+  badge.className = 'badge ' + (state==='ok'?'ok': state==='minor'?'minor': state==='major'?'major':'maint');
+  badge.textContent = state==='ok'?'OPERATIONNEL': state==='minor'?'DEGRADÉ': state==='major'?'MAJOR OUTAGE':'MAINTENANCE';
+  globalText.textContent = msg;
+
+  // Incidents
+  const incs = (data.incidents || []).slice().sort((a,b)=> (b.created||0)-(a.created||0));
+  if(incs.length===0){
+    incidentsEl.innerHTML = '<div class="empty">Aucun incident enregistré.</div>';
+  } else {
+    incidentsEl.innerHTML = '';
+    for(const it of incs){
+      const div = document.createElement('div');
+      div.className = 'incident';
+      const sevClass = it.severity==='minor'?'minor': it.severity==='major'?'major': it.severity==='maint'?'maint':'ok';
+      div.innerHTML = `<h3>${escapeHtml(it.title)}</h3>
+                       <div class="meta">${formatDate(it.created)}</div>
+                       <p style="margin-top:10px">${escapeHtml(it.details)}</p>
+                       <div class="sev ${sevClass}">${it.severity.toUpperCase()}</div>`;
+      incidentsEl.appendChild(div);
+    }
+  }
+
+  // History
+  const hist = (data.history || []);
+  if(hist.length===0){
+    historyEl.innerHTML = '<div class="empty">Aucun historique local.</div>';
+  } else {
+    historyEl.innerHTML = '';
+    for(const h of hist.slice().reverse()){
+      const d = document.createElement('div');
+      d.className = 'incident';
+      d.innerHTML = `<div style="font-size:13px;color:var(--muted)">${formatDate(h.t)}</div>
+                     <div style="margin-top:6px">${escapeHtml(h.msg)}</div>`;
+      historyEl.appendChild(d);
+    }
+  }
+}
+
+function escapeHtml(s){ return (s||'').toString().replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+render();
+// Optional: refresh every 10s to pick up manual local changes or if you use a shared mechanism
+setInterval(render, 10000);
+</script>
+</body>
+</html>

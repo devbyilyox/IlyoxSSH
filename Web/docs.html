@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ilyox'SSH - Documentation</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #0f0f0f;
+      color: #f0f0f0;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #6a0dad, #3a0ca3);
+      padding: 2rem;
+      text-align: center;
+      color: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      letter-spacing: 1px;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    h2 {
+      color: #bb86fc;
+      border-bottom: 2px solid #bb86fc;
+      padding-bottom: .5rem;
+      margin-top: 2rem;
+    }
+    pre, code {
+      background: #111;
+      color: #00ffc6;
+      padding: .6rem 1rem;
+      border-radius: 8px;
+      display: block;
+      font-family: monospace;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background: #0b0b0b;
+      color: #777;
+      margin-top: 3rem;
+      font-size: .9rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Ilyox'SSH - Documentation</h1>
+</header>
+
+<main>
+  <h2>📖 Introduction</h2>
+  <p>
+    Bienvenue dans la documentation de <b>Ilyox'SSH</b>.  
+    Ce terminal SSH personnalisé vous permet de vous connecter à vos serveurs Linux 
+    depuis Windows avec une interface simple, moderne et un banner ASCII unique.
+  </p>
+
+  <h2>⚙️ Installation</h2>
+  <ol>
+    <li>Téléchargez l’exécutable <code>IlyoxSSH.exe</code>.</li>
+    <li>Lancez l’application en double-cliquant dessus.</li>
+    <li>Aucune installation supplémentaire n’est requise.</li>
+  </ol>
+
+  <h2>🔑 Connexion SSH</h2>
+  <ul>
+    <li><b>IP du serveur</b> (ex: 123.45.67.89)</li>
+    <li><b>Port</b> (par défaut 22)</li>
+    <li><b>Utilisateur</b> (ex: root)</li>
+    <li><b>Mot de passe</b> ou <b>clé privée</b></li>
+  </ul>
+  <pre><code>👉 IP du serveur: 123.45.67.89
+👉 Port SSH [22]:
+👉 Utilisateur: root
+👉 Mot de passe: ********</code></pre>
+
+  <h2>💻 Utilisation</h2>
+  <pre><code>root@123.45.67.89$ ls -la
+bot.py
+requirements.txt
+venv/
+</code></pre>
+  <p>Utilisez <code>exit</code> pour fermer la session.</p>
+
+  <h2>📦 Exemple : installation d’un bot Discord</h2>
+  <pre><code># Mettre à jour les paquets
+sudo apt update && sudo apt upgrade -y
+
+# Installer Python et Git
+sudo apt install -y python3 python3-venv python3-pip git
+
+# Cloner votre bot
+git clone https://github.com/utilisateur/monbot.git
+
+# Lancer le bot
+python3 bot.py
+</code></pre>
+
+  <h2>❓ Support</h2>
+  <p>
+    En cas de problème, consultez la section support ou contactez la communauté.
+  </p>
+</main>
+
+<footer>
+  © 2025 Ilyox'SSH — Documentation officielle
+</footer>
+
+</body>
+</html>
